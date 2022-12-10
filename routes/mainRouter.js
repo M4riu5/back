@@ -1,5 +1,5 @@
 const express = require('express')
-const { register, login, getMe, createPost } = require('../controllers/mainController')
+const { register, login, getMe, createPost, getAll } = require('../controllers/mainController')
 const { checkAuth } = require('../utils/checkAuth')
 const router = express.Router()
 
@@ -12,5 +12,7 @@ router.get('/get', checkAuth , getMe)
 // POST ROUTE
 // create ppost
 router.post('/posts', checkAuth, createPost)
+// get all psot
+router.get('/allposts', getAll)
 
 module.exports  = router

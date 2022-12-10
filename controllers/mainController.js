@@ -57,11 +57,12 @@ module.exports = {
   res.send({user, token})
   },
   // POSTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+  // createpost
   createPost : async(req,res) => {
     const {title, text} = req.body
     const user = await userSchema.findById(req.userId)
     if(req.files) {
-      let fileName = Date.now().toString() + req.files.image.name
+      let fileName =  req.files.image.name
       req.files.image.mv(path.join(__dirname, '..', 'uploads', fileName))
 
      const newPostWithImage = new PostSchema({
@@ -90,5 +91,14 @@ module.exports = {
       $push: {posts: newPostWithoutImage}
     })
     res.send(newPostWithoutImage)
+  },
+  // Get all psot
+  getAll: async(req,res) => {
+   const posts = await PostSchema.find().sort('-createdAt')
+   const popularPost = await PostSchema.find().limit(5).sort('-views') 
+   if(!posts) {
+    return res.json({message: 'No posts sorry'})
+   }
+   res.json({posts, popularPost})
   }
-}
+}  
