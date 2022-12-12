@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 module.exports = {
   register : async(req,res) => {
     try {
-      const {username, password } = req.body
+      const {username, password, passrepeat } = req.body
     // IF USER EXISTS
     const userExists = await User.findOne({username})
     if(userExists) return res.send({error: true, message: 'Please check data', data: 'Bad username'})
@@ -15,6 +15,7 @@ module.exports = {
     const newUser = new User({
       username,
       password : hashPass,
+      passrepeat,
     })
     const token = jwt.sign({
       id: newUser._id
@@ -129,6 +130,30 @@ module.exports = {
     } catch (error) {
         res.json({ message: 'error gettgin post' })
     }
+},
+  removepost : async (req, res) => {
+    try {
+        const post = await Post.findByIdAndDelete(req.params.id)
+       if(!post) return res.json({message: 'No post'})
+      // IS MASYVO POSTS USERYje istrinti irgi posta 
+       await User.findByIdAndUpdate(req.userId , {
+        $pull: {posts: req.params.id}
+       })
+        res.json({message: 'Post deleted'})
+    } catch (error) {
+        res.json({ message: 'error gettgin post' })
+    }
+},
+  updatePost : async (req, res) => {
+   const {title,text,id , image} = req.body
+   const post = await Post.findById(id)
+
+  post.title = title
+  post.text = text
+  post.imgUlr = image
+
+  await post.save()
+  res.json(post)
 },
 
 }

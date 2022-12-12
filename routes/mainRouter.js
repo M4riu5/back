@@ -1,12 +1,13 @@
 const express = require('express')
-const { register, login, getMe, createPost, getAll, getById, getUploaded, getMyPosts } = require('../controllers/mainController')
+const { register, login, getMe, createPost, getAll, getById, getUploaded, getMyPosts, removepost, updatePost } = require('../controllers/mainController')
 const { checkAuth } = require('../utils/checkAuth')
+const { validateRegistration, validateLogin } = require('../utils/validator')
 const router = express.Router()
 
 // Register
-router.post('/register',register)
+router.post('/register',validateRegistration ,register)
 // Logins
-router.post('/login', login)
+router.post('/login',validateLogin, login)
 //Get me
 router.get('/get', checkAuth , getMe)
 // POST ROUTE
@@ -18,6 +19,9 @@ router.get('/allposts', getAll)
 router.get('/api/:id', getById)
 // get all posts
 router.get('/me', checkAuth, getMyPosts)
-
+// delete single post
+router.delete('/del/:id', checkAuth, removepost)
+// Update
+router.put('/del/:id', checkAuth, updatePost)
 
 module.exports  = router
